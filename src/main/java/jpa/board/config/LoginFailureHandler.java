@@ -22,21 +22,21 @@ public class LoginFailureHandler extends CoTopComponent implements Authenticatio
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
+		response.setCharacterEncoding("UTF-8");
 		writeResponse(response, parseException(request.getParameter("un"), exception));
 	}
 	
 	private JsonObject parseException(String userName, AuthenticationException exception) {
 		String errCode = "99";
 		String errMsg = exception.getMessage();
-
 		//존재하지 않는 아이디
 		if( exception instanceof UserIdException) {
-			log.error("존재하지않는 아이디입니다.");
+			errMsg = "존재하지않는 아이디입니다.";
 		}
 		
 		//권한이 없을경우
 		else if( exception instanceof UserAuthException) {
-			log.error("권한이 없는 아이디입니다.");
+			errMsg = "권한이 없는 아이디입니다.";
 		}
 		
 		JsonObject result = new JsonObject();

@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface UsersRepository extends JpaRepository<Users, Long> {
 
     //아이디로 검색
-    Users findByUserId(String userId);
+    Users findByUserIdAndUseYn(String userId, String useYn);
 }

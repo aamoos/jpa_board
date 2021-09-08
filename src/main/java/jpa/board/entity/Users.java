@@ -42,11 +42,6 @@ public class Users implements UserDetails {
     @Column(columnDefinition = "varchar(1) default 'Y' comment '사용여부'")
     private String useYn;
 
-    //권한과 1대1 매핑
-    @OneToOne(mappedBy = "users")
-    @JoinColumn
-    private UserAuthority userAuthority;
-
     @Transient
     public List<UserAuthority> authorities;
 
@@ -69,7 +64,10 @@ public class Users implements UserDetails {
                 ", email='" + email + '\'' +
                 ", handPhoneNo='" + handPhoneNo + '\'' +
                 ", useYn='" + useYn + '\'' +
-                ", userAuthority=" + userAuthority +
+                ", authorities=" + authorities +
+                ", authority='" + authority + '\'' +
+                ", authorityNm='" + authorityNm + '\'' +
+                ", auth='" + auth + '\'' +
                 '}';
     }
 

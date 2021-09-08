@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserAuthorityRepository extends JpaRepository<UserAuthority, Long> {
 
-    //권한으로 검색
-    UserAuthority findByAuthority(String authorities);
+    //아이디로 검색
+    UserAuthority findByUserId(String userId);
 
 }

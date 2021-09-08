@@ -36,20 +36,21 @@ public class AdminAuthenticationProvider implements AuthenticationProvider{
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 	UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) authentication;
-		
 		//아이디
 		String id = (authToken.getName()).toUpperCase();
-		
+
 		//비밀번호
 		String pwd = (String) authToken.getCredentials();
-		
-		//해당 사용자 정보 조회
-		Users userInfo = usersRepository.findByUserId(id);
 
-		log.info("userInfo={}",userInfo.toString());
+		log.info("id={}, pwd={}", id, pwd);
+
+		//해당 사용자 정보 조회
+		Users userInfo = usersRepository.findByUserIdAndUseYn(id, "Y");
+
+		log.info("userInfo={}", userInfo);
 
 		//해당 사용자가 있을경우
-		if(userInfo != null ) {	
+		if(userInfo != null ) {
 			//입력한 비밀번호가 현재 비밀번호와 같지 않으면
 			if(!(passwordEncoder.matches(pwd, userInfo.getPassword()))) {
 				throw new UserIdException("접속 할 수 없습니다. \n아이디 또는 비밀번호를 확인해주세요.");
@@ -60,9 +61,9 @@ public class AdminAuthenticationProvider implements AuthenticationProvider{
 				List<UserAuthority> authorities = new ArrayList<>();
 				
 				//권한 조회
-				UserAuthority getUserAuthorities = userAuthorityRepository.findByAuthority(authToken.getName());
+				UserAuthority getUserAuthorities = userAuthorityRepository.findByUserId(id);
 
-				log.info("getUserAuthorities={}",getUserAuthorities.toString());
+				log.info("getUserAuthorities={}",getUserAuthorities);
 
 				//권한이 있을경우
 				if(getUserAuthorities != null) {
@@ -90,8 +91,6 @@ public class AdminAuthenticationProvider implements AuthenticationProvider{
 		
 		return token;
 	}
-
-
 
 	@Override
 	public boolean supports(Class<?> authentication) {

@@ -21,11 +21,6 @@ public class UserAuthority implements GrantedAuthority {
     //사용자 권한
     private String authority;
 
-    //사용자와 1대1 매핑
-    @OneToOne
-    @JoinColumn
-    private Users users;
-
     @Transient
     private String authorityNm;
 
@@ -34,8 +29,8 @@ public class UserAuthority implements GrantedAuthority {
         return "UserAuthority{" +
                 "authIdx=" + authIdx +
                 ", userId='" + userId + '\'' +
-                ", authority=" + authority +
-                ", users=" + users +
+                ", authority='" + authority + '\'' +
+                ", authorityNm='" + authorityNm + '\'' +
                 '}';
     }
 

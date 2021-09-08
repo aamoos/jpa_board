@@ -67,8 +67,12 @@
 	        ,data : JSON.stringify(params)
 	        ,contentType: 'application/json'
 	        ,success : function(result) {
-				alert("회원가입이 정상적으로 되었습니다.");
-				location.href="/auth/login";
+				alert(result.resultMsg);
+
+				//회원가입이 정상적으로 되었을경우
+				if(result.resultCode == "OK"){
+				    location.href="/auth/login";
+				}
 	        },
 	        error: function(request, status, error) {
 
