@@ -1,83 +1,85 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default_layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-<th:block layout:fagment="head" th:include="@{/common/head}">
-</th:block>
-<link th:href="@{/css/loginForm.css}" rel="stylesheet" />
+    <th:block th:replace="fragment/config :: configFragment" ></th:block>
 
-<div class="wrapper">
-    <div id="formContent">
-        <!-- Tabs Titles -->
+    <!-- index.html 고유 CSS 추가 -->
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/loginForm.css}" >
+    </th:block>
 
-        <!-- Icon -->
-        <div class="fadeIn first">
-            회원가입
-        </div>
+    <div class="wrapper">
+        <div id="formContent">
+            <!-- Tabs Titles -->
 
-        <!-- Login Form -->
-        <form>
-            <input type="text" id="userId" class="fadeIn second" name="login" placeholder="아이디를 입력해주세요." required>
-            <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호를 입력해주세요." required>
-            <input type="text" id="userName" class="fadeIn third" name="login" placeholder="이름을 입력해주세요.">
-            <input type="text" id="email" class="fadeIn third" name="login" placeholder="이메일을 입력해주세요.">
-            <input type="text" id="handPhoneNo" class="fadeIn third" name="login" placeholder="핸드폰번호를 입력해주세요.">
-            <input type="button" class="fadeIn fourth" value="Join" onclick="join()">
-        </form>
+            <!-- Icon -->
+            <div class="fadeIn first">
+                회원가입
+            </div>
 
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-            <a class="underlineHover" href="/auth/login">뒤로가기</a>
+            <!-- Login Form -->
+            <form>
+                <input type="text" id="userId" class="fadeIn second" name="login" placeholder="아이디를 입력해주세요." required>
+                <input type="text" id="password" class="fadeIn third" name="login" placeholder="비밀번호를 입력해주세요." required>
+                <input type="text" id="userName" class="fadeIn third" name="login" placeholder="이름을 입력해주세요.">
+                <input type="text" id="email" class="fadeIn third" name="login" placeholder="이메일을 입력해주세요.">
+                <input type="text" id="handPhoneNo" class="fadeIn third" name="login" placeholder="핸드폰번호를 입력해주세요.">
+                <input type="button" class="fadeIn fourth" value="Join" onclick="join()">
+            </form>
+
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+                <a class="underlineHover" href="/auth/login">뒤로가기</a>
+            </div>
         </div>
     </div>
-</div>
 
-<script th:inline="javascript">
-	//게시판 등록
-	function join(){
+    <script th:inline="javascript">
+        //게시판 등록
+        function join(){
 
-		//step2. 게시판 등록
-		var params = {
-			 userId : $.trim($("#userId").val())
-			,password : $.trim($("#password").val())
-			,userName : $.trim($("#userName").val())
-			,email : $.trim($("#email").val())
-			,handPhoneNo : $.trim($("#handPhoneNo").val())
-			,useYn : 'Y'
-		}
+            //step2. 게시판 등록
+            var params = {
+                 userId : $.trim($("#userId").val())
+                ,password : $.trim($("#password").val())
+                ,userName : $.trim($("#userName").val())
+                ,email : $.trim($("#email").val())
+                ,handPhoneNo : $.trim($("#handPhoneNo").val())
+                ,useYn : 'Y'
+            }
 
-        console.log(params);
+            console.log(params);
 
-		if(params.userId == ""){
-			alert("아이디를 입력해주세요.");
-			return false;
-		}
+            if(params.userId == ""){
+                alert("아이디를 입력해주세요.");
+                return false;
+            }
 
-		else if(params.password == ""){
-			alert("패스워드를 입력해주세요.");
-			return false;
-		}
+            else if(params.password == ""){
+                alert("패스워드를 입력해주세요.");
+                return false;
+            }
 
-		$.ajax({
-	         type : 'POST'
-	        ,url : "/auth/join"
-	        ,dataType : 'json'
-	        ,data : JSON.stringify(params)
-	        ,contentType: 'application/json'
-	        ,success : function(result) {
-				alert(result.resultMsg);
+            $.ajax({
+                 type : 'POST'
+                ,url : "/auth/join"
+                ,dataType : 'json'
+                ,data : JSON.stringify(params)
+                ,contentType: 'application/json'
+                ,success : function(result) {
+                    alert(result.resultMsg);
 
-				//회원가입이 정상적으로 되었을경우
-				if(result.resultCode == "OK"){
-				    location.href="/auth/login";
-				}
-	        },
-	        error: function(request, status, error) {
+                    //회원가입이 정상적으로 되었을경우
+                    if(result.resultCode == "OK"){
+                        location.href="/auth/login";
+                    }
+                },
+                error: function(request, status, error) {
 
-	        }
-	    })
-	}
-</script>
-
+                }
+            })
+        }
+    </script>
+</html>

@@ -1,0 +1,34 @@
+<html lagn="ko" xmlns:th="http://www.thymeleaf.org">
+
+    <nav th:fragment="headerFragment" class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="true" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">게시판 예제</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true" style="">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">mybatis 게시판</a></li>
+                </ul>
+
+<!--                <ul class="nav navbar-nav navbar-right">-->
+<!--                    <c:choose>-->
+<!--                        <c:when test="${empty sessUserInfo.authority}">-->
+<!--                            <li><a href="#">회원가입</a></li>-->
+<!--                            <li><a href="${ct:url('AUTH.LOGIN')}">로그인</a></li>-->
+<!--                        </c:when>-->
+<!--                        <c:otherwise>-->
+<!--                            <li><a href="${ct:url('AUTH.LOGOUT_PROC')}">로그아웃</a></li>-->
+<!--                        </c:otherwise>-->
+<!--                    </c:choose>-->
+<!--                </ul>-->
+
+            </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+</html>

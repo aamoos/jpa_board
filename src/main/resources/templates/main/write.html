@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default_layout}">
+      layout:decorator="layout/default_layout">
 
-  <th:block layout:fagment="head" th:include="@{/common/head}">
-  </th:block>
-
-  <div layout:fragment="content" class="content">
+  <th:block layout:fragment="content">
     <article>
       <div class="container" role="main">
         <h2>게시판 글쓰기</h2>
@@ -34,7 +30,7 @@
         </div>
       </div>
     </article>
-  </div>
+  </th:block>
 </html>
 
 <script th:inline="javascript">
@@ -76,3 +72,4 @@
 	    })
 	}
 </script>
+</html>

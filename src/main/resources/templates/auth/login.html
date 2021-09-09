@@ -1,75 +1,78 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default_layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
-<th:block layout:fagment="head" th:include="@{/common/head}">
-</th:block>
-<link th:href="@{/css/loginForm.css}" rel="stylesheet" />
+    <th:block th:replace="fragment/config :: configFragment" ></th:block>
 
-<div class="wrapper fadeInDown">
-    <div id="formContent">
-        <!-- Tabs Titles -->
+    <!-- index.html 고유 CSS 추가 -->
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/loginForm.css}" >
+    </th:block>
 
-        <!-- Icon -->
-        <div class="fadeIn first">
-            로그인
-        </div>
+    <div class="wrapper fadeInDown">
+        <div id="formContent">
+            <!-- Tabs Titles -->
 
-        <!-- Login Form -->
-        <form>
-            <input type="text" id="loginId" class="fadeIn second" name="un" placeholder="아이디를 입력해주세요" onkeyup="enterkey()">
-            <input type="text" id="loginPw" class="fadeIn third" name="up" placeholder="비밀번호를 입력해주세요" onkeyup="enterkey()">
-            <input type="button" class="fadeIn fourth" value="Log In" onclick="loginSubmit()">
-        </form>
+            <!-- Icon -->
+            <div class="fadeIn first">
+                로그인
+            </div>
 
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-            <a class="underlineHover" href="/auth/join">회원가입</a>
+            <!-- Login Form -->
+            <form>
+                <input type="text" id="loginId" class="fadeIn second" name="un" placeholder="아이디를 입력해주세요" onkeyup="enterkey()">
+                <input type="text" id="loginPw" class="fadeIn third" name="up" placeholder="비밀번호를 입력해주세요" onkeyup="enterkey()">
+                <input type="button" class="fadeIn fourth" value="Log In" onclick="loginSubmit()">
+            </form>
+
+            <!-- Remind Passowrd -->
+            <div id="formFooter">
+                <a class="underlineHover" href="/auth/join">회원가입</a>
+            </div>
         </div>
     </div>
-</div>
 
-<script th:inline="javascript">
+    <script th:inline="javascript">
 
-    //로그인 submit
-	function loginSubmit(){
+        //로그인 submit
+        function loginSubmit(){
 
-		var params = {
-			 'un' : $.trim($("#loginId").val())
-			,'up' : $("#loginPw").val()
-		}
+            var params = {
+                 'un' : $.trim($("#loginId").val())
+                ,'up' : $("#loginPw").val()
+            }
 
-		console.log(params);
+            console.log(params);
 
-		$.ajax({
-	         type : 'POST'
-	        ,url : '/auth/login-proc'
-	        ,dataType : 'json'
-	        ,data : params
-	        ,success : function(result) {
-				console.log(result);
-				if(result.resultCode != "00"){
-					alert(result.resultMessage);
-				}
+            $.ajax({
+                 type : 'POST'
+                ,url : '/auth/login-proc'
+                ,dataType : 'json'
+                ,data : params
+                ,success : function(result) {
+                    console.log(result);
+                    if(result.resultCode != "00"){
+                        alert(result.resultMessage);
+                    }
 
-				else{
-					location.href=result.targetUrl;
-				}
+                    else{
+                        location.href=result.targetUrl;
+                    }
 
-	        },
-	        error: function(request, status, error) {
+                },
+                error: function(request, status, error) {
 
-	        }
-	    })
-	}
-
-	function enterkey() {
-	    if (window.event.keyCode == 13) {
-            // 엔터키가 눌렸을 때
-            loginSubmit()
+                }
+            })
         }
-    }
 
-</script>
+        function enterkey() {
+            if (window.event.keyCode == 13) {
+                // 엔터키가 눌렸을 때
+                loginSubmit()
+            }
+        }
+
+    </script>
+</html>

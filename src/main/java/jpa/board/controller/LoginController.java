@@ -6,6 +6,7 @@ import jpa.board.entity.Users;
 import jpa.board.repository.UserAuthorityRepository;
 import jpa.board.repository.UsersRepository;
 import jpa.board.service.LoginService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,10 @@ import java.util.Optional;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class LoginController {
 
-    @Autowired
-    LoginService loginService;
+    private final LoginService loginService;
     
     //로그인화면
     @GetMapping(value = {Url.AUTH.LOGIN})

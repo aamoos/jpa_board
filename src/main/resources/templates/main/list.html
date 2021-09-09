@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default_layout}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/default_Layout">
 
-    <th:block layout:fagment="head" th:include="@{/common/head}">
+    <!-- index.html 고유 CSS 추가 -->
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/common.css}" >
     </th:block>
 
-    <div layout:fragment="content" class="content">
+    <th:block layout:fragment="content">
         <div class="container">
             <h1 class="page-header">게시판 목록</h1>
             <br>
@@ -82,5 +83,5 @@
                 </div>
             </form>
         </div>
-    </div>
+    </th:block>
 </html>
