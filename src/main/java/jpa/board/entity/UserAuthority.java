@@ -21,16 +21,12 @@ public class UserAuthority implements GrantedAuthority {
     //사용자 권한
     private String authority;
 
-    @Transient
-    private String authorityNm;
-
     @Override
     public String toString() {
         return "UserAuthority{" +
                 "authIdx=" + authIdx +
                 ", userId='" + userId + '\'' +
                 ", authority='" + authority + '\'' +
-                ", authorityNm='" + authorityNm + '\'' +
                 '}';
     }
 

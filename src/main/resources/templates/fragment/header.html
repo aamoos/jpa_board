@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lagn="ko" xmlns:th="http://www.thymeleaf.org">
 
     <nav th:fragment="headerFragment" class="navbar navbar-default navbar-static-top">
@@ -16,17 +17,11 @@
                     <li class="active"><a href="#">mybatis 게시판</a></li>
                 </ul>
 
-<!--                <ul class="nav navbar-nav navbar-right">-->
-<!--                    <c:choose>-->
-<!--                        <c:when test="${empty sessUserInfo.authority}">-->
-<!--                            <li><a href="#">회원가입</a></li>-->
-<!--                            <li><a href="${ct:url('AUTH.LOGIN')}">로그인</a></li>-->
-<!--                        </c:when>-->
-<!--                        <c:otherwise>-->
-<!--                            <li><a href="${ct:url('AUTH.LOGOUT_PROC')}">로그아웃</a></li>-->
-<!--                        </c:otherwise>-->
-<!--                    </c:choose>-->
-<!--                </ul>-->
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a th:if="${#strings.isEmpty(session.authority)}" href="/auth/join">회원가입</a></li>
+                    <li><a th:if="${#strings.isEmpty(session.authority)}" href="/auth/login">로그인</a></li>
+                    <li><a th:if="${not #strings.isEmpty(session.authority)}" href="/auth/logout-proc">로그아웃</a></li>
+                </ul>
 
             </div><!--/.nav-collapse -->
         </div>

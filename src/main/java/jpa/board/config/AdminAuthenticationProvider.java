@@ -59,7 +59,7 @@ public class AdminAuthenticationProvider implements AuthenticationProvider{
 			//입력한 비밀번호가 현재 비밀번호와 같으면
 			else {
 				List<UserAuthority> authorities = new ArrayList<>();
-				
+
 				//권한 조회
 				UserAuthority getUserAuthorities = userAuthorityRepository.findByUserId(id);
 
@@ -67,11 +67,8 @@ public class AdminAuthenticationProvider implements AuthenticationProvider{
 
 				//권한이 있을경우
 				if(getUserAuthorities != null) {
-					UserAuthority auth = new UserAuthority();
-					auth.setAuthority(getUserAuthorities.getAuthority());
-					auth.setAuthorityNm(getUserAuthorities.getAuthorityNm());
-					authorities.add(auth);
-					userInfo.setAuthorities(authorities);					
+					authorities.add(getUserAuthorities);
+					userInfo.setAuthorities(authorities);
 				}
 				
 				//권한이 없을 경우

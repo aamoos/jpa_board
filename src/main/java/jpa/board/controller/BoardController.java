@@ -2,11 +2,13 @@ package jpa.board.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -14,7 +16,10 @@ import java.util.Map;
 public class BoardController {
 
     @GetMapping("/")
-    public String list(){
+    public String list(HttpSession session, Model model){
+
+        System.out.println(session.getAttribute("authority"));
+        model.addAttribute("authority", session.getAttribute("authority"));
         return "main/list";
     }
 

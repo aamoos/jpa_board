@@ -45,15 +45,6 @@ public class Users implements UserDetails {
     @Transient
     public List<UserAuthority> authorities;
 
-    @Transient
-    public String authority;
-
-    @Transient
-    public String authorityNm;
-
-    @Transient
-    public String auth;
-
     @Override
     public String toString() {
         return "Users{" +
@@ -65,9 +56,6 @@ public class Users implements UserDetails {
                 ", handPhoneNo='" + handPhoneNo + '\'' +
                 ", useYn='" + useYn + '\'' +
                 ", authorities=" + authorities +
-                ", authority='" + authority + '\'' +
-                ", authorityNm='" + authorityNm + '\'' +
-                ", auth='" + auth + '\'' +
                 '}';
     }
 
