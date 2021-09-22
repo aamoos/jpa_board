@@ -16,9 +16,11 @@ public class UserAuthority implements GrantedAuthority {
     private Long authIdx;
 
     //사용자 id
+    @Column(columnDefinition = "varchar(45) not null comment '사용자 아이디'")
     private String userId;
 
     //사용자 권한
+    @Column(columnDefinition = "varchar(45) not null comment '권한'")
     private String authority;
 
     @Override

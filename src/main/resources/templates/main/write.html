@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layout/default_layout">
-
   <th:block layout:fragment="content">
     <article>
       <div class="container" role="main">
@@ -41,7 +40,8 @@
 		var params = {
 			 boardTitle : $.trim($("#boardTitle").val())
 			,boardContent : $.trim($("#boardContent").val())
-			,userId : "admin"
+			,regId : $("#loginId").val()
+			,useYn : 'Y'
 		}
 
         console.log(params);
@@ -58,7 +58,7 @@
 
 		$.ajax({
 	         type : 'POST'
-	        ,url : "/write"
+	        ,url : "/board/write"
 	        ,dataType : 'json'
 	        ,data : JSON.stringify(params)
 	        ,contentType: 'application/json'

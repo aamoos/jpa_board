@@ -49,16 +49,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr th:each="board : ${board}">
                             <td>
                                 <label class="checkbox-inline">
                                     <input type="checkbox" class="chk" name="cchk" value="">
                                 </label>
-                            <td></td>
-                            <td><a href=""></a></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td th:text="${board.boardIdx}"></td>
+                            <td th:text="${board.boardTitle}"><a href=""></a></td>
+                            <td th:text="${board.regId}"></td>
+                            <td th:text="${#temporals.format(board.regDate, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${board.viewCount}"></td>
                             <td></td>
                         </tr>
                     </tbody>
@@ -66,19 +66,15 @@
 
                 <!-- ADMIN 권한일경우에만 글쓰기 권한있음 -->
                 <div class="text-right">
-                    <a href='javascript:boardDelete();' class="btn btn-danger">글삭제</a>
-                    <a href="/write" class="btn btn-primary">글쓰기</a>
+                    <a th:if="${session.authority == 'ADMIN'}" href='javascript:boardDelete();' class="btn btn-danger">글삭제</a>
+                    <a th:if="${session.authority == 'ADMIN'}" href="/board/write" class="btn btn-primary">글쓰기</a>
                 </div>
 
                 <div class="text-center">
                     <ul class="pagination">
-                        <li><a href="#">prev</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#">next</a></li>
+                        <li th:each="page : ${#numbers.sequence(0, totalPage - 1)}">
+                            <a th:href="@{/(page=${pageStat.index})}" th:text="${pageStat.index + 1}"></a>
+                        </li>
                     </ul>
                 </div>
             </form>
