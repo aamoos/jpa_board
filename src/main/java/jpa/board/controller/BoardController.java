@@ -36,8 +36,7 @@ public class BoardController {
 
         model.addAttribute("board", listPage.getContent());
         model.addAttribute("totalPage", totalPage);
-
-        log.info("totalPage={}", totalPage);
+        model.addAttribute("pageNo", page);
 
         return "main/list";
     }

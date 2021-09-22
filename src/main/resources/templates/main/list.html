@@ -49,6 +49,10 @@
                     </tr>
                     </thead>
                     <tbody>
+                        <tr th:if="${totalPage == 0}">
+                            <td colspan="7" style="text-align:center">조회된 리스트가 없습니다.</td>
+                        </tr>
+
                         <tr th:each="board : ${board}">
                             <td>
                                 <label class="checkbox-inline">
@@ -70,13 +74,14 @@
                     <a th:if="${session.authority == 'ADMIN'}" href="/board/write" class="btn btn-primary">글쓰기</a>
                 </div>
 
-                <div class="text-center">
+                <div th:if="${totalPage != 0}" class="text-center">
                     <ul class="pagination">
                         <li th:each="page : ${#numbers.sequence(0, totalPage - 1)}">
-                            <a th:href="@{/(page=${pageStat.index})}" th:text="${pageStat.index + 1}"></a>
+                            <a th:classappend="${pageStat.index == pageNo} ? on" th:href="@{/(page=${pageStat.index})}" th:text="${pageStat.index + 1}"></a>
                         </li>
                     </ul>
                 </div>
+
             </form>
         </div>
     </th:block>
