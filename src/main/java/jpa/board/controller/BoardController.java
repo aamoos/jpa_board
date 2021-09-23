@@ -91,7 +91,7 @@ public class BoardController {
     }
 
     /**
-     * 게시판 수정화면
+     * 게시판 수정
      * @param board
      * @return
      */
