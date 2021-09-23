@@ -13,7 +13,7 @@
         <br>
         <div class="mb-3">
           <label for="reg_id">작성자</label>
-          <input type="text" class="form-control" id="reg_id" name="regId"  value="admin" readonly>
+          <input type="text" class="form-control" id="reg_id" name="regId"  th:value="${session.sessUserInfo.userId}" readonly>
         </div>
         <br>
         <div class="mb-3">

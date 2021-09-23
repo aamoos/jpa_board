@@ -40,7 +40,7 @@ public class LoginService {
             //해당 아이디 권한 저장
             UserAuthority userAuthority = new UserAuthority();
             userAuthority.setUserId(users.getUserId());
-            userAuthority.setAuthority("USER");
+            userAuthority.setAuthority("ADMIN");
             userAuthorityRepository.save(userAuthority);
             result.put("resultCode" , "OK");
             result.put("resultMsg", "회원가입이 정상적으로 되었습니다.");
