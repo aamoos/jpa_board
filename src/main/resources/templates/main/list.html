@@ -14,7 +14,7 @@
             <h1 class="page-header">게시판 목록</h1>
             <br>
             <div class="input-group">
-                <input type="text" id="searchVal" class="form-control" placeholder="Search" th:value="${keyword}">
+                <input type="text" id="searchVal" onkeyup="enterkey()" class="form-control" placeholder="Search" th:value="${keyword}">
                 <div class="input-group-btn">
                     <button class="btn btn-default" type="button" onclick="search()">
                         <i class="glyphicon glyphicon-search"></i>
@@ -163,6 +163,14 @@ function search(){
     var page = $("#pageNo").val();
     var keyword = $.trim($("#searchVal").val());
     location.href="/?keyword="+keyword;
+}
+
+//엔터키 클릭시 검색
+function enterkey() {
+    if (window.event.keyCode == 13) {
+        // 엔터키가 눌렸을 때
+        search()
+    }
 }
 
 </script>
