@@ -12,8 +12,8 @@
         </div>
         <br>
         <div class="mb-3">
-          <label for="reg_id">작성자</label>
-          <input type="text" class="form-control" id="reg_id" name="regId"  th:value="${session.sessUserInfo.userId}" readonly>
+          <label for="regId">작성자</label>
+          <input type="text" class="form-control" id="regId" name="regId" th:if = "${not #strings.isEmpty(session.sessUserInfo)}" th:value="${session.sessUserInfo.userId}" readonly>
         </div>
         <br>
         <div class="mb-3">
@@ -21,9 +21,25 @@
           <textarea class="form-control" rows="5" id="boardContent" name="boardContent" placeholder="내용을 입력해 주세요"></textarea>
         </div>
         <br>
+        <div class="mb-3">
+          <form name="dataForm" id="dataForm" onsubmit="return registerAction()">
+            <button id="btn-upload" onclick="fileClick()" type="button" style="border: 1px solid #ddd; outline: none;">파일 추가</button>
+            <input id="input_file" onChange="fileChange(this)" multiple="multiple" type="file" style="display:none;">
+            <span style="font-size:10px; color: gray;">※첨부파일은 최대 10개까지 등록이 가능합니다.</span>
+            <br>
+            <br>
+            <br>
+            <div class="data_file_txt" id="data_file_txt">
+              <span>첨부 파일</span>
+              <br />
+              <div id="articlefileChange">
+              </div>
+            </div>
+          </form>
+        </div>
         <br>
         <div>
-          <button onclick="writeSubmit()" type="button" class="btn btn-sm btn-primary" id="btnSave">저장</button>
+          <button onclick="registerAction()" type="button" class="btn btn-sm btn-primary" id="btnSave">저장</button>
           <!-- <button onclick="registerAction()" type="button" class="btn btn-sm btn-primary" id="btnSave">파입업로드 테스트</button> -->
           <button onclick="location.href='/'" type="button" class="btn btn-sm btn-primary" id="btnList">목록</button>
         </div>
@@ -33,6 +49,119 @@
 </html>
 
 <script th:inline="javascript">
+
+    //관리자 계정이 아닐경우
+    if($("#authority").val() != "ADMIN"){
+      alert("관리자 계정으로 로그인 바랍니다.");
+      location.href = "/";
+    }
+
+    //파일 현재 필드 갯수
+	var fileCount = 0;
+
+	//전체 업로드 갯수
+	var totalCount = 10;
+
+	//파일 고유 넘버
+	var fileNum = 0;
+
+	//첨부파일 배열
+	var content_files = new Array();
+
+	//파일 시퀀스들
+	var fileIdxs = "";
+
+	//파일 추가 클릭
+	function fileClick(){
+		$("#input_file").click();
+	}
+
+	//파일 change 이벤트
+	function fileChange(target){
+
+		var files = target.files;
+
+		//파일 배열 담기
+		var filesArr = Array.prototype.slice.call(files);
+
+		if(fileCount + filesArr.length > totalCount){
+			alert("파일은 최대 "+totalCount+"개까지 업로드 할 수 있습니다.");
+			return false;
+		}
+
+		else{
+			fileCount = fileCount + filesArr.length;
+		}
+
+		// 각각의 파일 배열담기 및 기타
+		filesArr.forEach(function (f) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+			content_files.push(f);
+			console.log(content_files)
+			$('#articlefileChange').append(
+	       		'<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
+	       		+ '<font style="font-size:12px">' + f.name + '</font>'
+	       		+ '<img src="/images/icon_minus.png" style="width:20px; height:auto; vertical-align: middle; cursor: pointer;"/>'
+	       		+ '<div/>'
+			);
+	        fileNum++;
+	      };
+	      reader.readAsDataURL(f);
+	    });
+
+	    //초기화 한다.
+	    $("#input_file").val("");
+
+	}
+
+	//파일 삭제
+	function fileDelete(fileNum){
+		var no = fileNum.replace(/[^0-9]/g, "");
+	    content_files[no].is_delete = true;
+		$('#' + fileNum).remove();
+		fileCount --;
+	}
+
+	//파일 저장
+	function registerAction(){
+		console.log(content_files);
+		var form = $("form")[0];
+	 	var formData = new FormData(form);
+		for (var x = 0; x < content_files.length; x++) {
+			// 삭제 안한것만 담아 준다.
+			if(!content_files[x].is_delete){
+				 formData.append("article_file", content_files[x]);
+				 formData.append("filePath", "/main");
+			}
+		}
+
+	   /*
+	   * 파일업로드 multiple ajax처리
+	   */
+		$.ajax({
+	   	      type: "POST",
+	   	   	  enctype: "multipart/form-data",
+	   	      url: "/file-upload",
+	       	  data : formData,
+	       	  processData: false,
+	   	      contentType: false,
+	   	      success: function (data) {
+
+	   	    	console.log(data)
+	   	    	//파일 시퀀스들
+	   	    	fileIdxs = data.fileIdxs;
+	   	    	if(data.result == "OK"){
+	   	    		writeSubmit();
+				} else
+					alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
+	   	      },
+	   	      error: function (xhr, status, error) {
+	   	    	alert("서버오류로 지연되고있습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+			}
+		});
+	}
+
 	//게시판 등록
 	function writeSubmit(){
 
@@ -42,6 +171,7 @@
 			,boardContent : $.trim($("#boardContent").val())
 			,regId : $("#loginId").val()
 			,useYn : 'Y'
+			,fileIdxs : fileIdxs
 		}
 
         console.log(params);

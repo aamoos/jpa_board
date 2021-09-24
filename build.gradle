@@ -26,6 +26,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 	implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect')
+
+	// https://mvnrepository.com/artifact/commons-io/commons-io
+	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+
+	// Querydsl
+	implementation group: 'com.querydsl', name: 'querydsl-jpa'
+	implementation group: 'com.querydsl', name: 'querydsl-apt'
+	implementation group: 'com.querydsl', name: 'querydsl-core'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'

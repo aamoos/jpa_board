@@ -26,11 +26,55 @@
             <textarea class="form-control" rows="5" id="boardContent" name="boardContent" placeholder="내용을 입력해 주세요" th:text="${board.boardContent}"></textarea>
           </div>
 
+          <!-- 관리자가 아닐경우 -->
+            <div th:if="${session.authority != 'ADMIN'}" class="mb-3">
+              <div class="data_file_txt" id="data_file_txt">
+                <span>첨부 파일</span>
+                <br>
+                <div id="articlefileChange">
+                    <div th:each="boardFileInfo, index : ${boardFileInfo}">
+                      <a th:href="@{/file-download/} + ${boardFileInfo.fileId}">
+                        <font th:text="${boardFileInfo.fileId}" style="font-size:12px"></font>
+                        <img src="/images/file_icon.png" style="width:20px; height:auto; vertical-align: middle; cursor: pointer;">
+                      </a>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+          <!-- 관리자일경우 -->
+            <div th:if="${session.authority == 'ADMIN'}" class="mb-3">
+              <form name="dataForm" id="dataForm" onsubmit="return registerAction()">
+                <button id="btn-upload" onclick="fileClick()" type="button" style="border: 1px solid #ddd; outline: none;">파일 추가</button>
+                <input id="input_file" onChange="fileChange(this)" multiple="multiple" type="file" style="display:none;">
+                <span style="font-size:10px; color: gray;">※첨부파일은 최대 10개까지 등록이 가능합니다.</span>
+                <br>
+                <br>
+                <br>
+                <div class="data_file_txt" id="data_file_txt">
+                  <span>첨부 파일</span>
+                  <br />
+                  <div id="articlefileChange">
+                      <div class="attachDiv" th:each="boardFileInfo, index : ${boardFileInfo}">
+
+                        <a th:href="@{/file-download/} + ${boardFileInfo.fileId}">
+                          <font th:text="${boardFileInfo.fileId}" style="font-size:12px"></font>
+                          <img src="/images/file_icon.png" style="width:20px; height:auto; vertical-align: middle; cursor: pointer;">
+                        </a>
+
+                        <a class="beforeDeleteFile" th:attr="fileId=${boardFileInfo.fileId}">
+                          <img src="/images/icon_minus.png" style="width:20px; height:auto; vertical-align: middle; cursor: pointer;">
+                        </a>
+                      </div>
+                  </div>
+                </div>
+              </form>
+            </div>
         </form>
 
         <br>
           <div>
-            <button th:if="${session.authority == 'ADMIN'}" onclick="updateSubmit()" type="button" class="btn btn-sm btn-primary" id="btnSave">수정</button>
+            <button th:if="${session.authority == 'ADMIN'}" onclick="registerAction()" type="button" class="btn btn-sm btn-primary" id="btnSave">수정</button>
             <button th:if="${session.authority == 'ADMIN'}" onclick="boardDelete()" type="button" class="btn btn-sm btn-danger" >삭제</button>
             <button onclick="location.href='/'" type="button" class="btn btn-sm btn-primary" id="btnList">목록</button>
           </div>
@@ -40,6 +84,37 @@
 </html>
 
 <script th:inline="javascript">
+
+   //파일 현재 필드 갯수
+	var fileCount = 0;
+
+	//전체 업로드 갯수
+	var totalCount = 10;
+
+	//파일 고유 넘버
+	var fileNum = 0;
+
+	//첨부파일 배열
+	var content_files = new Array();
+
+	//파일 시퀀스들
+	var fileIdxs = "";
+
+	//이전에 등록한 파일 삭제 클릭시 시퀀스
+	var deleteFileIdxs = [];
+
+	//없는 게시물번호에 들어왔을경우
+	if($("#boardIdx").val() == ""){
+        alert("해당 게시물은 없는 번호입니다.");
+        location.href = "/";
+    }
+
+    //삭제버튼클릭
+    $(".beforeDeleteFile").click(function(){
+        deleteFileIdxs.push($(this).attr("fileid"));
+        $(this).parents(".attachDiv").remove();
+    });
+
 
 	//수정 버튼
 	function updateSubmit(){
@@ -51,6 +126,8 @@
 			,boardIdx : $("#boardIdx").val()
 			,useYn : "Y"
 			,regDate : $("#regDate").val()
+			,fileIdxs : fileIdxs
+			,deleteFileIdxs : deleteFileIdxs.toString()
 		}
 
 		console.log(params);
@@ -112,6 +189,106 @@
 		       }
 		   })
 		}
+	}
+
+    //파일 추가 클릭
+	function fileClick(){
+		$("#input_file").click();
+	}
+
+	//파일 change 이벤트
+	function fileChange(target){
+
+		var files = target.files;
+
+		//파일 배열 담기
+		var filesArr = Array.prototype.slice.call(files);
+
+		if(fileCount + filesArr.length > totalCount){
+			alert("파일은 최대 "+totalCount+"개까지 업로드 할 수 있습니다.");
+			return false;
+		}
+
+		else{
+			fileCount = fileCount + filesArr.length;
+		}
+
+		// 각각의 파일 배열담기 및 기타
+		filesArr.forEach(function (f) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+			content_files.push(f);
+			console.log(content_files)
+			$('#articlefileChange').append(
+	       		'<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
+	       		+ '<font style="font-size:12px">' + f.name + '</font>'
+	       		+ '<img src="/images/icon_minus.png" style="width:20px; height:auto; vertical-align: middle; cursor: pointer;"/>'
+	       		+ '<div/>'
+			);
+	        fileNum++;
+	      };
+	      reader.readAsDataURL(f);
+	    });
+
+	    //초기화 한다.
+	    $("#input_file").val("");
+
+	}
+
+	//파일 저장
+	function registerAction(){
+		console.log(content_files);
+		var form = $("form")[0];
+	 	var formData = new FormData(form);
+		for (var x = 0; x < content_files.length; x++) {
+			// 삭제 안한것만 담아 준다.
+			if(!content_files[x].is_delete){
+				 formData.append("article_file", content_files[x]);
+				 formData.append("filePath", "/main");
+			}
+		}
+
+	   /*
+	   * 파일업로드 multiple ajax처리
+	   */
+		$.ajax({
+	   	      type: "POST",
+	   	   	  enctype: "multipart/form-data",
+	   	      url: "/file-upload",
+	       	  data : formData,
+	       	  processData: false,
+	   	      contentType: false,
+	   	      success: function (data) {
+
+	   	    	console.log(data)
+	   	    	//파일 시퀀스들
+	   	    	fileIdxs = data.fileIdxs;
+	   	    	if(data.result == "OK"){
+	   	    		updateSubmit();
+				} else
+					alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
+	   	      },
+	   	      error: function (xhr, status, error) {
+	   	    	alert("서버오류로 지연되고있습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+			}
+		});
+	}
+
+	//파일 삭제
+	function fileDelete(fileNum){
+		var no = fileNum.replace(/[^0-9]/g, "");
+	    content_files[no].is_delete = true;
+		$('#' + fileNum).remove();
+		fileCount --;
+	}
+
+	//이전에 등록한 파일 삭제 버튼 클릭시
+	function deleteFileId(target, fileId){
+
+		console.log(target);
+		//배열에 삭제 시퀀스 넣기
+		deleteFileIdxs.push(fileId);
+
 	}
 
 

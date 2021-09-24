@@ -3,6 +3,7 @@
 
     <nav th:fragment="headerFragment" class="navbar navbar-default navbar-static-top">
         <input type="hidden" id="loginId" th:if="${session.sessUserInfo != null}" th:value="${session.sessUserInfo.userId}"/>
+        <input type="hidden" id="authority" th:if="${session.authority != null}" th:value="${session.authority}"/>
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="true" aria-controls="navbar">

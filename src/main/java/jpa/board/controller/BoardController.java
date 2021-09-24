@@ -1,8 +1,10 @@
 package jpa.board.controller;
 
 import jpa.board.entity.Board;
+import jpa.board.entity.BoardFile;
 import jpa.board.repository.BoardRepository;
 import jpa.board.service.BoardService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,13 +20,10 @@ import java.util.Map;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class BoardController {
 
-    @Autowired
-    BoardService boardService;
-
-    @Autowired
-    BoardRepository boardRepository;
+    private final BoardService boardService;
 
     /**
      * 게시판 목록화면
@@ -72,7 +71,15 @@ public class BoardController {
     @PostMapping("/board/write")
     public Long writeSubmit(@RequestBody Board board){
         log.info("params={}", board);
-        return boardService.savePost(board);
+
+        //board 게시판 테이블 insert
+        Long boardIdx = boardService.savePost(board);
+        board.setBoardIdx(boardIdx);
+
+        //board 파일 테이블 insert
+        boardService.insertBoardFile(board);
+
+        return boardIdx;
     };
 
     /**
@@ -83,10 +90,12 @@ public class BoardController {
      */
     @GetMapping("/board/update/{boardIdx}")
     public String update(@PathVariable Long boardIdx, Model model){
-        log.info("boardIdx={}", boardIdx);
-        Board boardDetail = boardService.getDetail(boardIdx);
-        log.info("boardDetail={}", boardDetail);
-        model.addAttribute("board", boardDetail);
+
+        //게시판 상세 데이터
+        model.addAttribute("board", boardService.getDetail(boardIdx));
+
+        //게시판 파일 리스트
+        model.addAttribute("boardFileInfo", boardService.selectBoardFile(boardIdx));
         return "main/update";
     }
 
@@ -99,7 +108,27 @@ public class BoardController {
     @PostMapping("/board/update")
     public Long updateSubmit(@RequestBody Board board){
         log.info("params={}", board);
-        return boardService.savePost(board);
+        Long boardIdx = boardService.savePost(board);
+
+        //board 파일 테이블 insert
+        boardService.insertBoardFile(board);
+
+        System.out.println("deleteFileIdxs : " + board.getDeleteFileIdxs());
+
+        //넘어온 파일 삭제 시퀀스 삭제처리
+        if(!board.getDeleteFileIdxs().isEmpty()){
+            String deleteFileIdxs = (String) board.getDeleteFileIdxs();
+            String[] fileIdxsArray = deleteFileIdxs.split(",");
+            System.out.println("fileIdxsArray : " + fileIdxsArray);
+            //해당 시퀀스 삭제처리
+            for(int i=0; i<fileIdxsArray.length; i++){
+                String fileId = fileIdxsArray[i];
+                System.out.println("fileId : " + fileId);
+                boardService.deleteBoardFile(Long.parseLong(fileId));
+            }
+        }
+
+        return boardIdx;
     }
 
     /**
