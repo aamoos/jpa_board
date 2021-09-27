@@ -31,7 +31,11 @@ public class Board {
     //조회수
     private int viewCount;
 
+    //사용여부
     private String useYn;
+
+    //첨부 파일 개수
+    private int attachCount;
 
     //insert시에 현재시간을 읽어서 저장
     @CreationTimestamp

@@ -6,7 +6,7 @@ plugins {
 
 group = 'jpa'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 configurations {
 	compileOnly {
@@ -30,11 +30,6 @@ dependencies {
 	// https://mvnrepository.com/artifact/commons-io/commons-io
 	implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 
-	// Querydsl
-	implementation group: 'com.querydsl', name: 'querydsl-jpa'
-	implementation group: 'com.querydsl', name: 'querydsl-apt'
-	implementation group: 'com.querydsl', name: 'querydsl-core'
-
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -46,4 +41,8 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+clean {
+	delete file('src/main/generated') // 인텔리제이 Annotation processor 생성물 생성위치
 }

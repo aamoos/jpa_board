@@ -64,7 +64,7 @@
                             <td th:text="${board.regId}"></td>
                             <td th:text="${#temporals.format(board.regDate, 'yyyy-MM-dd')}"></td>
                             <td th:text="${board.viewCount}"></td>
-                            <td></td>
+                            <td><img th:if="${board.attachCount != 0}" src="/images/file_icon.png" style="width:20px; height:auto; vertical-align: center; "/></td>
                         </tr>
                     </tbody>
                 </table>
