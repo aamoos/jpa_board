@@ -58,7 +58,7 @@
                       <div class="attachDiv" th:each="boardFileInfo, index : ${boardFileInfo}">
 
                         <a th:href="@{/file-download/} + ${boardFileInfo.fileId}">
-                          <font th:text="${boardFileInfo.fileId}" style="font-size:12px"></font>
+                          <font th:text="${boardFileInfo.origNm}" style="font-size:12px"></font>
                           <img src="/images/file_icon.png" style="width:20px; height:auto; vertical-align: middle; cursor: pointer;">
                         </a>
 

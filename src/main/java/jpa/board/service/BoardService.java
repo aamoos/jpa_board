@@ -113,7 +113,9 @@ public class BoardService {
 
     //boardIdx로 해당 게시물 파일리스트 조회
     public List<BoardFile> selectBoardFile(Long boardIdx){
-        return boardFileRepository.findByBoardIdx(boardIdx);
+        List<BoardFile> fileInfo = boardFileRepository.findByBoardIdx(boardIdx);
+
+        return fileInfo;
     }
 
 }

@@ -23,6 +23,8 @@ public class BoardFile {
 
     private String useYn;
 
+    private String origNm;
+
     public BoardFile(Long boardIdx, Long fileId, String useYn) {
         this.boardIdx = boardIdx;
         this.fileId = fileId;
