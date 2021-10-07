@@ -14,7 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,12 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    @GetMapping("/")
+    public void main(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/board/main");
+    }
+
+
     /**
      * 게시판 목록화면
      * @param session
@@ -32,7 +40,7 @@ public class BoardController {
      * @param page
      * @return
      */
-    @GetMapping("/")
+    @GetMapping("/board/main")
     public String list(HttpSession session, Model model
             , @RequestParam(required = false, defaultValue = "0", value = "page") int page
             , @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword){

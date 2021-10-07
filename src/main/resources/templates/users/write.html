@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+<th:block layout:fragment="content">
+    <article>
+        <div class="container" role="main">
+            <h2>사용자 등록</h2>
+            <div class="mb-3">
+                <label for="userId">아이디</label>
+                <input type="text" class="form-control" id="userId" name="userId" placeholder="아이디를 입력해 주세요">
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="password">패스워드</label>
+                <input type="text" class="form-control" id="password" name="password" placeholder="아이디를 입력해 주세요">
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="userName">이름</label>
+                <input type="text" class="form-control" id="userName" name="userName" placeholder="아이디를 입력해 주세요">
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="email">이메일</label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="아이디를 입력해 주세요">
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="handPhoneNo">핸드폰번호</label>
+                <input type="text" class="form-control" id="handPhoneNo" name="handPhoneNo" placeholder="아이디를 입력해 주세요">
+            </div>
+            <br>
+            <div class="mb-3">
+                <label for="regId">작성자</label>
+                <input type="text" class="form-control" id="regId" name="regId" th:if = "${not #strings.isEmpty(session.sessUserInfo)}" th:value="${session.sessUserInfo.userId}" readonly>
+            </div>
+            <br>
+            <div class="mb-3">
+                <div class="form-group">
+                    <label for="authSelectBox">권한</label>
+                    <select class="form-control" id="authSelectBox">
+                        <option value="ADMIN">ADMIN</option>
+                        <option value="USER">USER</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <form name="dataForm" id="dataForm" onsubmit="return registerAction()">
+                    <button id="btn-upload" onclick="fileClick()" type="button" style="border: 1px solid #ddd; outline: none;">프로필 추가</button>
+                    <input id="input_file" onChange="fileChange(this)" accept="image/*"  type="file" style="display:none;">
+                    <br>
+                    <br>
+                    <br>
+                    <div class="data_file_txt" id="data_file_txt">
+                        <span>프로필</span>
+                        <br />
+                        <div id="articlefileChange">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <br>
+            <div>
+                <button onclick="registerAction()" type="button" class="btn btn-sm btn-primary" id="btnSave">저장</button>
+                <!-- <button onclick="registerAction()" type="button" class="btn btn-sm btn-primary" id="btnSave">파입업로드 테스트</button> -->
+                <button onclick="location.href='/userManagement/list'" type="button" class="btn btn-sm btn-primary" id="btnList">목록</button>
+            </div>
+        </div>
+    </article>
+</th:block>
+</html>
+
+<script th:inline="javascript">
+
+    //관리자 계정이 아닐경우
+    if($("#authority").val() != "ADMIN"){
+      alert("관리자 계정으로 로그인 바랍니다.");
+      location.href = "/";
+    }
+
+    //파일 현재 필드 갯수
+	var fileCount = 0;
+
+	//전체 업로드 갯수
+	var totalCount = 10;
+
+	//파일 고유 넘버
+	var fileNum = 0;
+
+	//첨부파일 배열
+	var content_files = new Array();
+
+	//파일 시퀀스들
+	var fileIdxs = "";
+
+	//파일 추가 클릭
+	function fileClick(){
+		$("#input_file").click();
+	}
+
+	//파일 change 이벤트
+	function fileChange(target){
+
+		var files = target.files;
+
+		//파일 배열 담기
+		var filesArr = Array.prototype.slice.call(files);
+
+		fileCount = filesArr.length;
+
+		// 각각의 파일 배열담기 및 기타
+		filesArr.forEach(function (f) {
+		    var imageUrl = URL.createObjectURL(f);
+			var reader = new FileReader();
+			reader.onload = function (e) {
+			content_files = new Array();
+			content_files.push(f);
+			console.log(content_files)
+			$('#articlefileChange').html(
+	       		'<div id="file' + fileNum + '" onclick="fileDelete(\'file' + fileNum + '\')">'
+	       		 + "<img src = '"+imageUrl+"' style='width:300px; height:auto; vertical-align: middle; cursor: pointer;'></img>"
+	       		+ '<div/>'
+			);
+	        fileNum++;
+	      };
+	      reader.readAsDataURL(f);
+	    });
+
+	    //초기화 한다.
+	    $("#input_file").val("");
+
+	}
+
+	//파일 삭제
+	function fileDelete(fileNum){
+		var no = fileNum.replace(/[^0-9]/g, "");
+	    content_files[no].is_delete = true;
+		$('#' + fileNum).remove();
+		fileCount --;
+	}
+
+	//파일 저장
+	function registerAction(){
+		console.log(content_files);
+		var form = $("form")[0];
+	 	var formData = new FormData(form);
+		for (var x = 0; x < content_files.length; x++) {
+			// 삭제 안한것만 담아 준다.
+			if(!content_files[x].is_delete){
+				 formData.append("article_file", content_files[x]);
+				 formData.append("filePath", "/main");
+			}
+		}
+
+	   /*
+	   * 파일업로드 multiple ajax처리
+	   */
+		$.ajax({
+	   	      type: "POST",
+	   	   	  enctype: "multipart/form-data",
+	   	      url: "/file-upload",
+	       	  data : formData,
+	       	  processData: false,
+	   	      contentType: false,
+	   	      success: function (data) {
+
+	   	    	console.log(data)
+	   	    	//파일 시퀀스들
+	   	    	fileIdxs = data.fileIdxs;
+	   	    	if(data.result == "OK"){
+	   	    		writeSubmit();
+				} else
+					alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
+	   	      },
+	   	      error: function (xhr, status, error) {
+	   	    	alert("서버오류로 지연되고있습니다. 잠시 후 다시 시도해주시기 바랍니다.");
+			}
+		});
+	}
+
+	//게시판 등록
+	function writeSubmit(){
+
+		//step2. 게시판 등록
+		var params = {
+			 userId : $.trim($("#userId").val())
+			,password : $.trim($("#password").val())
+			,userName : $.trim($("#userName").val())
+			,email : $.trim($("#email").val())
+			,handPhoneNo : $.trim($("#handPhoneNo").val())
+			,regId : $("#loginId").val()
+			,useYn : 'Y'
+			,fileIdxs : fileIdxs
+			,attachCount : $("#articlefileChange").find("font").length
+			,authority : $("#authSelectBox").find("option:selected").val()
+		}
+
+        console.log(params);
+
+		if(params.boardTitle == ""){
+			alert("제목을 입력해주세요.");
+			return false;
+		}
+
+		else if(params.boardContent == ""){
+			alert("내용을 입력해주세요.");
+			return false;
+		}
+
+		$.ajax({
+	         type : 'POST'
+	        ,url : "/users/write"
+	        ,dataType : 'json'
+	        ,data : JSON.stringify(params)
+	        ,contentType: 'application/json'
+	        ,success : function(result) {
+				alert("해당글이 정상적으로 등록되었습니다.");
+				location.href="/users/list";
+	        },
+	        error: function(request, status, error) {
+
+	        }
+	    })
+	}
+</script>
+</html>

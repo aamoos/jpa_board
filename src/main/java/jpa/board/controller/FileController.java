@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import jpa.board.common.AttachDownloadView;
 import jpa.board.repository.FileRepository;
 import jpa.board.service.FileService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.ModelAndView;
 
 /* 파일 controller */
 @Controller
@@ -93,5 +95,28 @@ public class FileController {
             }
 
         }
+    }
+
+    //Controller
+    //첨부파일 image 보여주는 api
+    @GetMapping(value = {"/api/img/print/{idx}"})
+    public ModelAndView getPublicImage(@PathVariable("idx") Long idx, HttpServletResponse res) {
+        System.out.println("타니?");
+        jpa.board.entity.File file = fileRepository.findByFileIdx(idx);
+        System.out.println(file.getLogiPath()+file.getLogiNm());
+        File initialFile = new File(file.getLogiPath()+file.getLogiNm());
+
+        ModelAndView mav = new ModelAndView();
+        try {
+            mav.setView(new AttachDownloadView());
+            mav.addObject("file", initialFile);
+            mav.addObject("filename", "filename");
+            res.setContentType( "image/gif" );
+        }
+
+        catch (Exception e) {
+            e.getStackTrace();
+        }
+        return mav;
     }
 }

@@ -42,8 +42,22 @@ public class Users implements UserDetails {
     @Column(columnDefinition = "varchar(1) default 'Y' comment '사용여부'")
     private String useYn;
 
+    private Long fileIdx;
+
+    @Transient
+    private String authority;
+
     @Transient
     public List<UserAuthority> authorities;
+
+    @Transient
+    private String fileIdxs;
+
+    @Transient
+    private String deleteFileIdxs;
+
+    @Transient
+    private Long authIdx;
 
     @Override
     public String toString() {

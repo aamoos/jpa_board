@@ -42,7 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
                 .antMatchers("/board/**").permitAll()
                 .antMatchers("/file-download/**").permitAll()            //파일 다운로드
                 .antMatchers("/auth/**").permitAll()					    //로그인, 회원가입 접속허용
