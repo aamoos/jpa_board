@@ -23,7 +23,9 @@ public interface BoardFileRepository extends CrudRepository<BoardFile, Long> {
             ",file T2\n"+
             "WHERE\n"+
             "T1.FILE_ID = T2.FILE_IDX\n"+
-            "AND T1.USE_YN = 'Y'", nativeQuery = true
+            "AND T1.USE_YN = 'Y'\n"+
+            "AND T1.BOARD_IDX = :boardIdx\n"
+            , nativeQuery = true
     )
     List<BoardFile> findByBoardIdx(Long boardIdx);
 
