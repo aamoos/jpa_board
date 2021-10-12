@@ -1,6 +1,8 @@
 package jpa.board.common;
 
-/* api url 정의 */
+/**
+ * API URL 정의
+ */
 public final class Url {
 	public static final String TILES_AJAX = "/tiles/ajax";
 	

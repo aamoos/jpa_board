@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
-/* 로그인 실패시 타는 핸들러 */
-
+/**
+ * 로그인 실패시 타는 핸들러
+ */
 @Slf4j
 @Component
 public class LoginFailureHandler extends CoTopComponent implements AuthenticationFailureHandler {

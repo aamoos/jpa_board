@@ -15,7 +15,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import com.google.gson.JsonObject;
 
-/* 로그인 성공시 타는 handler */
+/**
+ * 로그인 성공시 타는 핸들러
+ */
 @Component
 @Slf4j
 public class LoginSucessHandler extends CoTopComponent implements AuthenticationSuccessHandler {

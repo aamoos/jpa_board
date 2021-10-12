@@ -6,8 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
 import com.google.gson.JsonObject;
 
-/* 최상위 컴포넌트 */
-
+/**
+ * 최상위 컴포넌트
+ */
 public abstract class CoTopComponent {
 	protected void writeResponse(HttpServletResponse res, JsonObject jsonObject) throws IOException{
 		writeResponse(res, jsonObject.toString());

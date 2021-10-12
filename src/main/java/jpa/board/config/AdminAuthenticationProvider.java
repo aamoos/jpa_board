@@ -18,7 +18,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-/** 로그인 provider */
+/**
+ * 로그인 provider
+ */
 @Slf4j
 @Component
 public class AdminAuthenticationProvider implements AuthenticationProvider{
