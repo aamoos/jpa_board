@@ -71,4 +71,9 @@ public abstract class StringUtils {
 
         return encodedFilename;
     }
+
+    //널 빈값 체크
+    public static boolean isStringEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
 }

@@ -69,7 +69,12 @@ public class Users implements UserDetails {
                 ", email='" + email + '\'' +
                 ", handPhoneNo='" + handPhoneNo + '\'' +
                 ", useYn='" + useYn + '\'' +
+                ", fileIdx=" + fileIdx +
+                ", authority='" + authority + '\'' +
                 ", authorities=" + authorities +
+                ", fileIdxs='" + fileIdxs + '\'' +
+                ", deleteFileIdxs='" + deleteFileIdxs + '\'' +
+                ", authIdx=" + authIdx +
                 '}';
     }
 

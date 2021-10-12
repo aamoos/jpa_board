@@ -1,24 +1,17 @@
 package jpa.board.controller;
 
 import jpa.board.entity.Board;
-import jpa.board.entity.BoardFile;
-import jpa.board.repository.BoardRepository;
 import jpa.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Slf4j
@@ -32,7 +25,6 @@ public class BoardController {
         response.sendRedirect("/board/main");
     }
 
-
     /**
      * 게시판 목록화면
      * @param session
@@ -45,18 +37,7 @@ public class BoardController {
             , @RequestParam(required = false, defaultValue = "0", value = "page") int page
             , @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword){
 
-        //불러올 페이지의 데이터 1페이지는 0부터 시작
-        Page<Board> listPage =  boardService.list(page, keyword);
-
-        //총페이지수
-        int totalPage = listPage.getTotalPages();
-        model.addAttribute("board", listPage.getContent());
-        model.addAttribute("totalPage", totalPage);
-        model.addAttribute("pageNo", page);
-        model.addAttribute("resultDataTotal", listPage.getTotalElements());
-        model.addAttribute("size", listPage.getSize());
-        model.addAttribute("number", listPage.getNumber());
-        model.addAttribute("keyword", keyword);
+        putListModel(model, page, keyword);
 
         return "main/list";
     }
@@ -79,15 +60,7 @@ public class BoardController {
     @PostMapping("/board/write")
     public Long writeSubmit(@RequestBody Board board){
         log.info("params={}", board);
-
-        //board 게시판 테이블 insert
-        Long boardIdx = boardService.savePost(board);
-        board.setBoardIdx(boardIdx);
-
-        //board 파일 테이블 insert
-        boardService.insertBoardFile(board);
-
-        return boardIdx;
+        return boardService.insertBoard(board);
     };
 
     /**
@@ -98,12 +71,7 @@ public class BoardController {
      */
     @GetMapping("/board/update/{boardIdx}")
     public String update(@PathVariable Long boardIdx, Model model){
-
-        //게시판 상세 데이터
-        model.addAttribute("board", boardService.getDetail(boardIdx));
-
-        //게시판 파일 리스트
-        model.addAttribute("boardFileInfo", boardService.selectBoardFile(boardIdx));
+        putDetailModel(boardIdx, model);
         return "main/update";
     }
 
@@ -116,27 +84,7 @@ public class BoardController {
     @PostMapping("/board/update")
     public Long updateSubmit(@RequestBody Board board){
         log.info("params={}", board);
-        Long boardIdx = boardService.savePost(board);
-
-        //board 파일 테이블 insert
-        boardService.insertBoardFile(board);
-
-        System.out.println("deleteFileIdxs : " + board.getDeleteFileIdxs());
-
-        //넘어온 파일 삭제 시퀀스 삭제처리
-        if(!board.getDeleteFileIdxs().isEmpty()){
-            String deleteFileIdxs = (String) board.getDeleteFileIdxs();
-            String[] fileIdxsArray = deleteFileIdxs.split(",");
-            System.out.println("fileIdxsArray : " + fileIdxsArray);
-            //해당 시퀀스 삭제처리
-            for(int i=0; i<fileIdxsArray.length; i++){
-                String fileId = fileIdxsArray[i];
-                System.out.println("fileId : " + fileId);
-                boardService.deleteBoardFile(Long.parseLong(fileId));
-            }
-        }
-
-        return boardIdx;
+        return boardService.updateBoard(board);
     }
 
     /**
@@ -151,5 +99,49 @@ public class BoardController {
         log.info("boardIdxArray={}", boardIdxArray);
         boardService.deleteBoard(boardIdxArray);
         return boardIdxArray;
+    }
+
+    /**
+     * 리스트 모델 넣기
+     * @param model
+     * @param page
+     * @param keyword
+     */
+    private void putListModel(Model model, int page, String keyword) {
+        //불러올 페이지의 데이터 1페이지는 0부터 시작
+        Page<Board> listPage =  boardService.list(page, keyword);
+
+        //총페이지수
+        model.addAttribute("board", listPage.getContent());
+        model.addAttribute("totalPage", listPage.getTotalPages());
+
+        //페이지번호
+        model.addAttribute("pageNo", page);
+
+        //리스트 총갯수
+        model.addAttribute("resultDataTotal", listPage.getTotalElements());
+
+        //페이징 사이즈
+        model.addAttribute("size", listPage.getSize());
+
+        //페이지 넘버
+        model.addAttribute("number", listPage.getNumber());
+
+        //검색키워드
+        model.addAttribute("keyword", keyword);
+    }
+
+
+    /**
+     * 상세 모델 넣기
+     * @param boardIdx
+     * @param model
+     */
+    private void putDetailModel(Long boardIdx, Model model) {
+        //게시판 상세 데이터
+        model.addAttribute("board", boardService.getDetail(boardIdx));
+
+        //게시판 파일 리스트
+        model.addAttribute("boardFileInfo", boardService.selectBoardFile(boardIdx));
     }
 }

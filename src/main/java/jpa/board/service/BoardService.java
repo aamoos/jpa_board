@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,6 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardFileRepository boardFileRepository;
-    private final EntityManager em;
 
     /**
      * 게시판 목록 페이징
@@ -72,7 +70,8 @@ public class BoardService {
     }
 
     /**
-        게시판 use_yn N으로 업데이트
+     * 게시판 use_yn N으로 업데이트
+     * @param boardIdxArray
      */
     public void deleteBoard(List<String> boardIdxArray){
         for(int i=0; i<boardIdxArray.size(); i++) {
@@ -89,8 +88,10 @@ public class BoardService {
         }
     }
 
-    //게시판 파일 등록
-    @Transactional
+    /**
+     * 게시판 파일 등록
+     * @param board
+     */
     public void insertBoardFile(Board board) {
         //파일 등록할게 있을경우만
         if(board.getFileIdxs() != null) {
@@ -100,22 +101,74 @@ public class BoardService {
 
             for (int i=0; i<fileIdxArray.length; i++) {
                 String fileIdx = fileIdxArray[i].trim();
+                System.out.println("====================");
+                System.out.println(board.getBoardIdx());
+                System.out.println(Long.parseLong(fileIdx));
+
+                System.out.println("====================");
                 BoardFile boardFile = new BoardFile(board.getBoardIdx(), Long.parseLong(fileIdx),"Y") ;
                 boardFileRepository.save(boardFile);
             }
         }
     }
 
-    @Transactional
+    /**
+     * 게시판 파일 삭제
+     * @param fileId
+     */
     public void deleteBoardFile(Long fileId){
         boardFileRepository.deleteById(fileId);
     }
 
-    //boardIdx로 해당 게시물 파일리스트 조회
+    /**
+     * boardIdx로 해당 게시물 파일리스트 조회
+     * @param boardIdx
+     * @return
+     */
     public List<BoardFile> selectBoardFile(Long boardIdx){
         List<BoardFile> fileInfo = boardFileRepository.findByBoardIdx(boardIdx);
 
         return fileInfo;
+    }
+
+    /**
+     * 게시판 등록
+     * @param board
+     * @return
+     */
+    public Long insertBoard(Board board){
+        //board 게시판 테이블 insert
+        Long boardIdx = savePost(board);
+        board.setBoardIdx(boardIdx);
+        //board 파일 테이블 insert
+        insertBoardFile(board);
+        return boardIdx;
+    }
+
+    /**
+     * 게시판 업데이트
+     * @param board
+     * @return
+     */
+    public Long updateBoard(Board board){
+        Long boardIdx = savePost(board);
+
+        //board 파일 테이블 insert
+        insertBoardFile(board);
+
+        //넘어온 파일 삭제 시퀀스 삭제처리
+        if(!board.getDeleteFileIdxs().isEmpty()){
+            String deleteFileIdxs = (String) board.getDeleteFileIdxs();
+            String[] fileIdxsArray = deleteFileIdxs.split(",");
+            System.out.println("fileIdxsArray : " + fileIdxsArray);
+            //해당 시퀀스 삭제처리
+            for(int i=0; i<fileIdxsArray.length; i++){
+                String fileId = fileIdxsArray[i];
+                System.out.println("fileId : " + fileId);
+                deleteBoardFile(Long.parseLong(fileId));
+            }
+        }
+        return boardIdx;
     }
 
 }

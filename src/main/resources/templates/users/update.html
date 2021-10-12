@@ -191,7 +191,7 @@
 	   	    	//파일 시퀀스들
 	   	    	fileIdxs = data.fileIdxs;
 	   	    	if(data.result == "OK"){
-	   	    		writeSubmit();
+	   	    		updateSubmit();
 				} else
 					alert("서버내 오류로 처리가 지연되고있습니다. 잠시 후 다시 시도해주세요");
 	   	      },
@@ -202,7 +202,7 @@
 	}
 
 	//게시판 등록
-	function writeSubmit(){
+	function updateSubmit(){
 
         if(!changeFlag){
             fileIdxs = $("#fileIdx").val()
@@ -242,7 +242,7 @@
 
 		$.ajax({
 	         type : 'POST'
-	        ,url : "/users/write"
+	        ,url : "/users/update"
 	        ,dataType : 'json'
 	        ,data : JSON.stringify(params)
 	        ,contentType: 'application/json'
