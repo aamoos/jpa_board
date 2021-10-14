@@ -18,6 +18,7 @@
                 <ul class="nav navbar-nav">
                     <li th:classappend="${#strings.contains(#httpServletRequest.requestURI, 'board')} ? active"><a href="/board/main">jpa 게시판</a></li>
                     <li th:if="${session.authority == 'ADMIN'}" th:classappend="${#strings.contains(#httpServletRequest.requestURI, 'users')} ? active"><a href="/users/list">사용자 관리</a></li>
+                    <li th:if="${session.authority == 'ADMIN'}" th:classappend="${#strings.contains(#httpServletRequest.requestURI, 'api')} ? active"><a href="/api/list">api 관리</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">

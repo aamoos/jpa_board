@@ -27,13 +27,13 @@ public class BoardController {
 
     /**
      * 게시판 목록화면
-     * @param session
      * @param model
      * @param page
+     * @param keyword
      * @return
      */
     @GetMapping("/board/main")
-    public String list(HttpSession session, Model model
+    public String list(Model model
             , @RequestParam(required = false, defaultValue = "0", value = "page") int page
             , @RequestParam(required = false, defaultValue = "", value = "keyword") String keyword){
 

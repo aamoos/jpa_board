@@ -51,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/file-download/**").permitAll()            //파일 다운로드
                 .antMatchers("/auth/**").permitAll()					    //로그인, 회원가입 접속허용
                 .antMatchers("/resource/**/images/**").permitAll()		//이미지
+                .antMatchers("/api/getAddressData").permitAll()          //open api
                 .anyRequest().authenticated()
                 .and()
 

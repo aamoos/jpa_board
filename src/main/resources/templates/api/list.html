@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+
+<!-- index.html 고유 CSS 추가 -->
+<th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/common.css}" >
+</th:block>
+
+<th:block layout:fragment="content">
+    <input type="hidden" id="pageNo" th:value="${pageNo}" />
+    <div class="container">
+        <h1 class="page-header">api 목록</h1>
+        <br>
+        <div class="input-group">
+            <input type="text" id="searchVal" onkeyup="enterkey()" class="form-control" placeholder="Search" th:value="${keyword}">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="button" onclick="search()">
+                    <i class="glyphicon glyphicon-search"></i>
+                </button>
+            </div>
+        </div>
+        <br />
+
+        <form>
+            <table class="table table-hover">
+                <colgroup>
+                    <col width="2%" />
+                    <col width="5%" />
+                    <col width="20%" />
+                    <col width="20%" />
+                    <col width="5%" />
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="allCheckBox" class="chk" onclick="allChecked(this)">
+                        </label>
+                    </th>
+                    <th>번호</th>
+                    <th>도메인</th>
+                    <th>api key</th>
+                    <th>등록 날짜</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${totalPage == 0}">
+                    <td colspan="7" style="text-align:center">조회된 리스트가 없습니다.</td>
+                </tr>
+
+                <tr th:each="api, index : ${api}">
+                    <td>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" class="chk" name="cchk" onclick="cchkClicked()"  th:value="${api.apiIdx}">
+                        </label>
+                    <td><a th:text="${resultDataTotal - (size * number) - index.index}" th:href="@{/api/update/} + ${api.apiIdx}"></a></td>
+                    <td><a th:text="${api.domainUrl}" th:href="@{/api/update/} + ${api.apiIdx}"></a></td>
+                    <td th:text="${api.apiKey}"></td>
+                    <td th:text="${#temporals.format(api.regDate, 'yyyy-MM-dd')}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- ADMIN 권한일경우에만 글쓰기 권한있음 -->
+            <div class="text-right">
+                <a th:if="${session.authority == 'ADMIN'}" href='javascript:apiDelete();' class="btn btn-danger">글삭제</a>
+                <a th:if="${session.authority == 'ADMIN'}" href="/api/write" class="btn btn-primary">글쓰기</a>
+            </div>
+
+            <div th:if="${totalPage != 0}" class="text-center">
+                <ul class="pagination">
+                    <li th:each="page : ${#numbers.sequence(0, totalPage - 1)}">
+                        <a th:classappend="${pageStat.index == pageNo} ? on" th:href="@{/api/list(page=${pageStat.index}, keyword=${keyword})}" th:text="${pageStat.index + 1}"></a>
+                    </li>
+                </ul>
+            </div>
+
+        </form>
+    </div>
+</th:block>
+</html>
+
+<script th:inline="javascript">
+
+//체크박스 전체 선택 클릭 이벤트
+function allChecked(target){
+
+	if($(target).is(":checked")){
+		//체크박스 전체 체크
+		$(".chk").prop("checked", true);
+	}
+
+	else{
+		//체크박스 전체 해제
+		$(".chk").prop("checked", false);
+	}
+}
+//자식 체크박스 클릭 이벤트
+function cchkClicked(){
+
+	//체크박스 전체개수
+	var allCount = $("input:checkbox[name=cchk]").length;
+
+	//체크된 체크박스 전체개수
+	var checkedCount = $("input:checkbox[name=cchk]:checked").length;
+
+	//체크박스 전체개수와 체크된 체크박스 전체개수가 같으면 체크박스 전체 체크
+	if(allCount == checkedCount){
+		$(".chk").prop("checked", true);
+	}
+
+	//같지않으면 전체 체크박스 해제
+	else{
+		$("#allCheckBox").prop("checked", false);
+	}
+}
+//게시판 삭제하기
+function apiDelete(){
+
+	var apiIdxArray = [];
+
+	$("input:checkbox[name=cchk]:checked").each(function(){
+		apiIdxArray.push($(this).val());
+	});
+
+	console.log(apiIdxArray);
+
+	if(apiIdxArray == ""){
+		alert("삭제할 항목을 선택해주세요.");
+		return false;
+	}
+
+	var confirmAlert = confirm('정말로 삭제하시겠습니까?');
+	if(confirmAlert){
+
+		$.ajax({
+	        type : 'POST'
+	       ,url : "/api/delete"
+	       ,dataType : 'json'
+	       ,data : JSON.stringify(apiIdxArray)
+	       ,contentType: 'application/json'
+	       ,success : function(result) {
+				alert("해당글이 정상적으로 삭제되었습니다.");
+				location.href="/api/list";
+	       },
+	       error: function(request, status, error) {
+
+	       }
+	   })
+	}
+}
+
+//검색기능
+function search(){
+    var page = $("#pageNo").val();
+    var keyword = $.trim($("#searchVal").val());
+    location.href="/api/list?keyword="+keyword;
+}
+
+//엔터키 클릭시 검색
+function enterkey() {
+    if (window.event.keyCode == 13) {
+        // 엔터키가 눌렸을 때
+        search()
+    }
+}
+
+</script>

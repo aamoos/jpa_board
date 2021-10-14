@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+  <th:block layout:fragment="content">
+    <article>
+      <div class="container" role="main">
+        <h2>api 등록</h2>
+        <div class="mb-3">
+          <label for="domainUrl">도메인</label>
+          <input type="text" class="form-control" id="domainUrl" name="domainUrl" placeholder="도메인을 입력해 주세요">
+        </div>
+        <br>
+        <div class="mb-3">
+          <label for="regId">작성자</label>
+          <input type="text" class="form-control" id="regId" name="regId" th:if = "${not #strings.isEmpty(session.sessUserInfo)}" th:value="${session.sessUserInfo.userId}" readonly>
+        </div>
+        <br>
+        <div class="mb-3">
+          <label for="apiKey">api key</label>
+          <input type="text" class="form-control" id="apiKey" name="apiKey" placeholder="api를 입력해 주세요">
+        </div>
+        <br>
+        <div>
+          <button onclick="writeSubmit()" type="button" class="btn btn-sm btn-primary" id="btnSave">저장</button>
+          <!-- <button onclick="registerAction()" type="button" class="btn btn-sm btn-primary" id="btnSave">파입업로드 테스트</button> -->
+          <button onclick="location.href='/api/list'" type="button" class="btn btn-sm btn-primary" id="btnList">목록</button>
+        </div>
+      </div>
+    </article>
+  </th:block>
+</html>
+
+<script th:inline="javascript">
+
+    //관리자 계정이 아닐경우
+    if($("#authority").val() != "ADMIN"){
+      alert("관리자 계정으로 로그인 바랍니다.");
+      location.href = "/";
+    }
+
+	//게시판 등록
+	function writeSubmit(){
+
+		//step2. 게시판 등록
+		var params = {
+			 domainUrl : $.trim($("#domainUrl").val())
+			,apiKey : $.trim($("#apiKey").val())
+			,regId : $("#loginId").val()
+			,useYn : 'Y'
+		}
+
+        console.log(params);
+
+		if(params.domainUrl == ""){
+			alert("도메인을 입력해주세요.");
+			return false;
+		}
+
+		else if(params.apiKey == ""){
+			alert("api key를 입력해주세요.");
+			return false;
+		}
+
+		$.ajax({
+	         type : 'POST'
+	        ,url : "/api/write"
+	        ,dataType : 'json'
+	        ,data : JSON.stringify(params)
+	        ,contentType: 'application/json'
+	        ,success : function(result) {
+				alert("해당글이 정상적으로 등록되었습니다.");
+				location.href="/api/list";
+	        },
+	        error: function(request, status, error) {
+
+	        }
+	    })
+	}
+</script>
+</html>
